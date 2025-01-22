@@ -25,7 +25,9 @@ class DatabaseSeeder extends Seeder
 
         User::factory(3)->create()->each(function ($user) {
             Establishment::factory(rand(1, 3))->create(['user_id' => $user->id])->each(function ($establishment) {
-                ProductCategory::factory(rand(3, 5))->create(['establishment_id' => $establishment->id])->each(function ($category) {
+                ProductCategory::factory(rand(3, 5))->create([
+                    'establishment_id' => $establishment->id,
+                    ])->each(function ($category) {
                     Product::factory(rand(5, 10))->create([
                         'establishment_id' => $category->establishment_id,
                         'product_category_id' => $category->id,
