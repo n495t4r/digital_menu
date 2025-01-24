@@ -49,6 +49,7 @@ class EstablishmentFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => $name,
+            'description' => '',
             'slug' => Str::slug($name),
             'currency' => 'NGN',
             'address' => $this->faker->address,
