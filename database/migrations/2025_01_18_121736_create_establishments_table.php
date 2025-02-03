@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('facebook')->nullable();
             $table->string('twitter')->nullable();
+            $table->string('api_endpoint')->nullable();
+            $table->string('api_key')->nullable();
             $table->timestamps();
         });
     }

@@ -16,6 +16,7 @@ class Establishment extends Model
         'slug',
         'currency',
         'address',
+        'description',
         'phone',
         'color_theme',
         'color',
@@ -28,6 +29,8 @@ class Establishment extends Model
         'instagram',
         'facebook',
         'twitter',
+        'api_endpoint',
+        'api_key',
     ];
 
     public function user()

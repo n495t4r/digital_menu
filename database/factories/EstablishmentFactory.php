@@ -45,11 +45,12 @@ class EstablishmentFactory extends Factory
     {
         $name = $this->faker->company;
         $url = "https://pevaltd.com";
+        $description = "Welcome to ".$name.'. Enjoy your visit';
 
         return [
             'user_id' => User::factory(),
             'name' => $name,
-            'description' => '',
+            'description' => $description,
             'slug' => Str::slug($name),
             'currency' => 'NGN',
             'address' => $this->faker->address,

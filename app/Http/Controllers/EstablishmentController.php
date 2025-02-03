@@ -4,11 +4,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Establishment;
+use App\Services\ProductApiService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class EstablishmentController extends Controller
 {
+    private ProductApiService $apiService;
+    
+    public function __construct(ProductApiService $apiService)
+    {
+        $this->apiService = $apiService;
+    }
     public function index()
     {
         $establishments = auth()->user()->establishments;
@@ -28,6 +35,7 @@ class EstablishmentController extends Controller
             'currency' => 'required|string|max:3',
             'address' => 'required|string',
             'phone' => 'required|string',
+            'description' => 'string',
         ]);
 
         $establishment = auth()->user()->establishments()->create($validated);
@@ -73,12 +81,29 @@ class EstablishmentController extends Controller
 
     public function guestView($slug)
     {
-        $establishment = Establishment::where('slug', $slug)
-            ->with(['categories.products' => function ($query) {
-                $query->where('status', true)->orderBy('name');
-            }])
-            ->firstOrFail();
-
-        return Inertia::render('GuestView', ['establishment' => $establishment]);
+        // Get establishment data from database
+        $establishment = Establishment::where('slug', $slug)->firstOrFail();
+        
+        // Try to get products from API
+        $apiProducts = $this->apiService->getProducts($establishment);
+        
+        if ($apiProducts && $apiProducts->isNotEmpty()) {
+            // Merge establishment data with API products
+            $formattedData = $this->apiService->formatApiProducts($apiProducts, $establishment);
+            return Inertia::render('GuestView', ['establishment' => $formattedData]);
+        }
+        
+         // Fallback to database products if API fails or returns no data
+         $establishmentWithProducts = Establishment::where('slug', $slug)
+         ->with(['categories' => function ($query) {
+             $query->whereHas('products', function ($query) {
+                 $query->where('status', true);
+             });
+         }, 'categories.products' => function ($query) {
+             $query->where('status', true)->orderBy('name');
+         }])
+         ->firstOrFail();
+        
+        return Inertia::render('GuestView', ['establishment' => $establishmentWithProducts]);
     }
 }
