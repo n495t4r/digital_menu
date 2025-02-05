@@ -22,17 +22,17 @@ class ProductApiService
     {
         // Skip API fetch if endpoint or key not configured
         if (!$establishment->api_endpoint || !$establishment->api_key) {
-    
+            dd('api information not found');
             return null;
         }
 
         $cacheKey = "products_establishment_{$establishment->id}";
         
-        return Cache::remember($cacheKey, now()->addMinutes(15), function () use ($establishment) {
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($establishment) {
             try {
                 $perPage = 200;
 
-                // $api_endpoint = 'https://pevaltd.com/api/v1/products?per_page='.$perPage;
+                $api_endpoint = 'https://pevaltd.com/api/v1/products?per_page='.$perPage;
                 // $api_key = '4rau6W5aG6YQbZ3O6f4fTWF2xVrvLobCo0a0Ac9tgyFPUOXAFAslUZGaBsxiv8aA';
                 $response = $this->client->get($establishment->api_endpoint, [
                 // $response = $this->client->get($api_endpoint, [

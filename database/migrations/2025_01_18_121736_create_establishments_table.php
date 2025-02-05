@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('slug')->unique();
             $table->string('currency', 3)->default('NGN');
             $table->text('address');

@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { router, usePage } from "@inertiajs/react"
 import Layout from "@/Layouts/Layout"
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 
 export default function Create() {
   const { errors } = usePage().props
@@ -34,7 +35,9 @@ export default function Create() {
   }
 
   return (
-    <Layout>
+    <AuthenticatedLayout
+    header="New Establishment"
+    >
       <h1 className="text-3xl font-bold mb-6">Create New Establishment</h1>
       <form onSubmit={handleSubmit} className="max-w-lg">
         <div className="mb-4">
@@ -117,6 +120,20 @@ export default function Create() {
           {errors.phone && <div className="text-red-500 text-sm mt-1">{errors.phone}</div>}
         </div>
 
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
+          <textarea
+            id="description"
+            value={values.description}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            required
+          ></textarea>
+          {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
+        </div>
+
         <button
           type="submit"
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -124,7 +141,7 @@ export default function Create() {
           Create Establishment
         </button>
       </form>
-    </Layout>
+    </AuthenticatedLayout>
   )
 }
 

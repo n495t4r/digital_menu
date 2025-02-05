@@ -43,7 +43,7 @@ export default function GuestView({ establishment }) {
         <header
           className="bg-opacity-90 backdrop-filter backdrop-blur-lg relative h-64 flex items-end"
           style={{
-            backgroundImage: `url(/storage/${establishment.bg_image || "/placeholder.svg"})`,
+            backgroundImage: `url(${establishment.bg_image || "/placeholder.svg"})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -53,7 +53,7 @@ export default function GuestView({ establishment }) {
             <div className="flex items-center">
               {establishment.logo && (
                 <img
-                  src={ `/storage/${establishment.logo}` || "/placeholder.svg"}
+                  src={establishment.logo || "/placeholder.svg"}
                   alt={establishment.name}
                   className="h-16 w-16 rounded-full mr-4 border-2 border-white"
                 />
