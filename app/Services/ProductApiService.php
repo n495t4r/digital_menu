@@ -22,7 +22,7 @@ class ProductApiService
     {
         // Skip API fetch if endpoint or key not configured
         if (!$establishment->api_endpoint || !$establishment->api_key) {
-            dd('api information not found');
+            // dd('api information not found');
             return null;
         }
 
