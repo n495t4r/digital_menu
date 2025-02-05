@@ -87,9 +87,27 @@ class EstablishmentController extends Controller
         if ($request->hasFile('logo')) {
             // Delete the old logo if it exists
 
-            if ($establishment->logo) {
-                Storage::disk('public')->delete($establishment->getOriginal('logo'));
-            }
+            $originalLogo = $establishment->getOriginal('logo');
+
+            // Check if the original bg_image is different from the new one
+            if ($originalLogo && $originalLogo !== $establishment->logo) {
+
+                // Check if the file exists before trying to delete
+                if (Storage::disk('public')->exists($originalLogo)) {
+                    // Attempt to delete the old background image
+                    try {
+                        if (Storage::disk('public')->delete($originalLogo)) {
+                            // Log::info("Successfully deleted old background image: " . $originalBgImage);
+                        } else {
+                            // Log::error("Failed to delete old background image: " . $originalBgImage);
+                        }
+                    } catch (\Exception $e) {
+                        // Log any exceptions thrown during deletion
+                        Log::error("Error deleting old background image: " . $e->getMessage());
+                    }
+                } else {
+                    // Log::warning("Old background image does not exist: " . $originalBgImage);
+                }
 
             // Store the new logo
             $logoPath = $request->file('logo')->store('img/establishment/logo', 'public');
@@ -103,8 +121,6 @@ class EstablishmentController extends Controller
 
             // Check if the original bg_image is different from the new one
             if ($originalBgImage && $originalBgImage !== $establishment->bg_image) {
-                // Log the original background image path before deletion
-                Log::info("Attempting to delete old background image: " . $originalBgImage);
 
                 // Check if the file exists before trying to delete
                 if (Storage::disk('public')->exists($originalBgImage)) {
