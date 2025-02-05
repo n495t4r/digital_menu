@@ -109,9 +109,10 @@ class EstablishmentController extends Controller
                     // Log::warning("Old background image does not exist: " . $originalBgImage);
                 }
 
-            // Store the new logo
-            $logoPath = $request->file('logo')->store('img/establishment/logo', 'public');
-            $establishment->logo = $logoPath; // Save the file path in the database
+                // Store the new logo
+                $logoPath = $request->file('logo')->store('img/establishment/logo', 'public');
+                $establishment->logo = $logoPath; // Save the file path in the database
+            }
         }
 
         // Handle the background image upload if present
