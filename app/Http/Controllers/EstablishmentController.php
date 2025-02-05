@@ -110,8 +110,25 @@ class EstablishmentController extends Controller
                 }
 
                 // Store the new logo
-                $logoPath = $request->file('logo')->store('img/establishment/logo', 'public');
-                $establishment->logo = $logoPath; // Save the file path in the database
+                try {
+                    // Attempt to store the file
+                    $logoImagePath = $request->file('logo')->store('img/establishment/logo', 'public');
+                    
+                    // Save the file path in the database
+                    $establishment->logo = $logoImagePath;
+                
+                    Log::info('logo uploaded successfully.', ['path' => $logoImagePath]);
+                } catch (\Exception $e) {
+                    // Log the error message if something goes wrong
+                    Log::error('Error uploading logo: ' . $e->getMessage(), [
+                        'exception' => $e,
+                        'request' => $request->all()
+                    ]);
+                    
+                    // Optionally, you could return an error response
+                    return back()->withErrors('Failed to upload the logo.');
+                }   
+            
             }
         }
 
@@ -140,9 +157,23 @@ class EstablishmentController extends Controller
                     // Log::warning("Old background image does not exist: " . $originalBgImage);
                 }
 
-                // Store the new background image
-                $bgImagePath = $request->file('bg_image')->store('img/establishment/bg', 'public');
-                $establishment->bg_image = $bgImagePath; // Save the file path in the database
+                try {
+                    // Attempt to store the file
+                    $bgImagePath = $request->file('bg_image')->store('img/establishment/bg', 'public');
+                    
+                    // Save the file path in the database
+                    $establishment->bg_image = $bgImagePath;                
+                    Log::info('Background image uploaded successfully.', ['path' => $bgImagePath]);
+                } catch (\Exception $e) {
+                    // Log the error message if something goes wrong
+                    Log::error('Error uploading background image: ' . $e->getMessage(), [
+                        'exception' => $e,
+                        'request' => $request->all()
+                    ]);                
+                    // Optionally, you could return an error response
+                    return back()->withErrors('Failed to upload the background image.');
+                }   
+            
             }
         }
         if ($establishment->isDirty()) {
