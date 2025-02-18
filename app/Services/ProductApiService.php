@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class ProductApiService
 {
     private Client $client;
-    
+
     public function __construct()
     {
         $this->client = new Client();
@@ -27,22 +27,22 @@ class ProductApiService
         }
 
         $cacheKey = "products_establishment_{$establishment->id}";
-        
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($establishment) {
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($establishment) {
             try {
                 $perPage = 200;
 
-                $api_endpoint = 'https://pevaltd.com/api/v1/products?per_page='.$perPage;
+                $api_endpoint = 'https://pevaltd.com/api/v1/products?per_page=' . $perPage;
                 // $api_key = '4rau6W5aG6YQbZ3O6f4fTWF2xVrvLobCo0a0Ac9tgyFPUOXAFAslUZGaBsxiv8aA';
                 $response = $this->client->get($establishment->api_endpoint, [
-                // $response = $this->client->get($api_endpoint, [
+                    // $response = $this->client->get($api_endpoint, [
                     'headers' => [
                         'X-API-Key' => $establishment->api_key,
                         // 'X-API-Key' => $api_key,
                         'Accept' => 'application/json'
                     ]
                 ]);
-                
+
                 $data = json_decode($response->getBody(), true);
                 // dd($data);
                 return collect($data['data']);
@@ -53,12 +53,19 @@ class ProductApiService
         });
     }
 
-    public function formatApiProducts(Collection $products, Establishment $establishment): array
+    public function formatApiProducts(Collection $products, Establishment $establishment, bool $incl_uncategorised = false): array
     {
         // Group products by category
         $groupedProducts = $products->groupBy(function ($product) {
             return $product['category']['name'] ?? 'Uncategorized';
         });
+
+        // Filter out 'Uncategorized' if $incl_uncategorised is false
+        if (!$incl_uncategorised) {
+            $groupedProducts = $groupedProducts->filter(function ($_, $categoryName) {
+                return $categoryName !== 'Uncategorized';
+            });
+        }
 
         // Format categories with their products
         $categories = $groupedProducts->map(function ($products, $categoryName) use ($establishment) {
